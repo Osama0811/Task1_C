@@ -3,18 +3,26 @@
 #include <string.h>
 #include <stdlib.h>
 
-typedef struct 
+typedef struct
 {
     char first_name[20];
     char last_name[20];
     char user_name[20];
     char password[20];
+    char active[20];
 }User;
 
+typedef union
+{
+ struct{
+    char True[20];
+    char False[20];
+     }act;
+}Active;
 
 User users[100];
-int numUsers = 0;
-
+int numUsers  = 0;
+int opt;
 //Registration
 void registerUser()
 {
@@ -24,8 +32,27 @@ void registerUser()
         return;
     }
     User user;
+    Active active ;
 
     printf("\nRegistration:\n");
+
+
+    printf("\nChoice Active: \n");
+    printf("\n 1- Active :  \n");
+    printf("\n 2- Not Active :  \n");
+    printf("\n Your Operation : ");
+    scanf("%d", &opt);
+
+        if(opt == 1){
+        strcpy(active.act.True,"true");
+        strcpy(user.active,active.act.True);
+        }
+        else if(opt == 2){
+        strcpy(active.act.False,"false");
+        strcpy(user.active,active.act.False);
+        }
+        else{printf("Your Operation not match :(");return 0;}
+
 
     printf("\nEnter First Name:  ");
     scanf("%s",user.first_name);
@@ -39,6 +66,7 @@ void registerUser()
     printf("\nEnter Password: ");
     scanf("%s",user.password);
 
+
      users[numUsers++] = user;
     printf("\nRegistration successful!\n\n");
 }
@@ -46,6 +74,7 @@ void registerUser()
 
 //Login
 bool loginUser(){
+    Active active ;
 
     char user_name[20];
     char password[20];
@@ -56,10 +85,17 @@ bool loginUser(){
     scanf("%s", user_name);
     printf("\nPassword: ");
     scanf("%s", password);
-
      for (int i = 0; i < numUsers; i++) {
-        if (strcmp(user_name, users[i].user_name) == 0 && strcmp(password,users[i].password) == 0) {
-            return true;
+        if (strcmp(user_name, users[i].user_name) == 0 && strcmp(password,users[i].password) == 0 ) {
+            strcpy( active.act.False , "false");
+           if (!strcmp(users[i].active , active.act.False) ){
+
+            printf("\n\nSorry Sir your Account Is Not Actives :(");
+            Beep(523, 800);
+            return 0;
+           }
+        return true ;
+
         }
     }
     return false;
@@ -70,6 +106,7 @@ bool loginUser(){
 
 int main()
 {
+    int opt;
     int choice;
     bool loggedIn = false;
 
@@ -81,13 +118,13 @@ int main()
 
            if(choice== 1)
         {
-            
+
             registerUser();
         }
 
     else if(choice== 2)
         {
-            
+
                         loggedIn = loginUser();
                 if (loggedIn) {
                     printf("\nLogin successful!\n\n");
